@@ -1,0 +1,15 @@
+﻿@model Actor
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            <img src="/Images/@Model.ProfilePictureUrl" class="rounded-circle" style="width: 80px; height: 80px; margin-right: 20px;" />
+            <div>
+                <h4>@($"{Model.FirstName} {@Model.LastName}")</h4>
+                <p>@Model.Bio</p>
+                <a href="#" target="_blank">Social Media</a>
+            </div>
+        </div>
+    </div>
+</div>
+

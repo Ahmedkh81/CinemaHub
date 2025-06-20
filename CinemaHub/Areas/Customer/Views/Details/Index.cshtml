@@ -1,0 +1,59 @@
+﻿@model Movie
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="border rounded shadow-sm overflow-hidden">
+            <img src="~/Images/@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Name" style="object-fit: cover; height: 100%;" />
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h2 class="text-primary mb-3">@Model.Name</h2>
+        <p class="text-muted">@Model.Description</p>
+
+        <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item"><strong>🎟️ Price:</strong> <span class="text-success">@Model.Price.ToString("C")</span></li>
+            <li class="list-group-item"><strong>🏢 Cinema:</strong> @Model.Cinema.Name</li>
+            <li class="list-group-item"><strong>📅 Start Date:</strong> @Model.StartDate.ToShortDateString()</li>
+            <li class="list-group-item"><strong>📅 End Date:</strong> @Model.EndDate.ToShortDateString()</li>
+            <li class="list-group-item"><strong>📂 Category:</strong> @Model.Category.Name</li>
+            <li class="list-group-item">
+                <strong>🎬 Status:</strong>
+                <span class="badge rounded-pill
+                    @(Model.MovieStatus == MovieStatus.Available ? "bg-success" :
+                                            Model.MovieStatus == MovieStatus.Upcoming ? "bg-warning text-dark" :
+                                            "bg-danger")">
+                    @Model.MovieStatus
+                </span>
+            </li>
+        </ul>
+
+        <div class="mt-4">
+            <h5 class="fw-bold">Actors:</h5>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var actor in Model.Actors)
+                {
+                    <a href="/Customer/Actor/Index/@actor.Id">
+                        <img src="~/Images/@actor.ProfilePictureUrl" class="rounded-circle" style="width: 50px; height: 50px;" />
+                    </a>
+                }
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.TrailerUrl))
+        {
+            <div class="mt-4">
+                <h5 class="fw-bold">🎞️ Trailer</h5>
+                <video src="@Model.TrailerUrl" controls class="rounded w-100 shadow-sm" style="max-width: 600px;"></video>
+            </div>
+        }
+
+        <div class="mt-4 text-center">
+            <a href="#" class="btn px-5 py-2 fw-bold
+                @(Model.MovieStatus == MovieStatus.Expired ? "btn-secondary disabled" : "btn-success")">
+                Book Ticket
+            </a>
+        </div>
+    </div>
+</div>
+

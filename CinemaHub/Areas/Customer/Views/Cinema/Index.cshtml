@@ -1,0 +1,26 @@
+﻿@model List<Cinema>
+
+<div class="container mt-4">
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Cinema Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cinema in Model)
+            {
+                <tr class="align-middle text-center">
+                    <td>@cinema.Name</td>
+                    <td>
+                        <a href="/Customer/CinemaDetails/Index/@cinema.Id" class="btn btn-sm btn-outline-primary">
+                            🎬 See Details
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

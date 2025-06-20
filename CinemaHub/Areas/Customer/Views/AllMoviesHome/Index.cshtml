@@ -1,0 +1,25 @@
+﻿@model List<Movie>
+
+<div class="container mt-4">
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Movie Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="align-middle text-center">
+                    <td>@item.Name</td>
+                    <td>
+                        <a href="/Customer/Details/Index/@item.Id" class="btn btn-sm btn-outline-primary">
+                            🎬 See Movie
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,64 @@
+﻿@using CinemaHub.Models
+@model List<Movie>
+
+<form asp-controller="Home" asp-action="Index" method="get" class="d-flex mb-4">
+    <input type="text" name="search" class="form-control me-2 shadow-sm" placeholder="Search by movie name..." value="@ViewBag.Search" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-lg border-0 rounded-4 overflow-hidden">
+                <img class="card-img-top" src="~/Images/@item.ImageUrl" alt="@item.Name" style="height: 350px; object-fit: cover;" />
+                <div class="card-body">
+                    <h5 class="card-title text-primary fw-bold">@item.Name</h5>
+                    <p class="mb-1"><strong>Price:</strong> <span class="text-success">@item.Price.ToString("C")</span></p>
+                    <p class="mb-1"><strong>Cinema:</strong> @item.Cinema.Name</p>
+                    <p class="mb-1"><strong>Start:</strong> @item.StartDate.ToShortDateString()</p>
+                    <p class="mb-1"><strong>End:</strong> @item.EndDate.ToShortDateString()</p>
+                    <p class="mb-2"><strong>Category:</strong> <a href="/Customer/AllMoviesHome/Index/@item.Category.Id" class="text-decoration-none">@item.Category.Name</a></p>
+                    <span class="badge rounded-pill
+                            @(item.MovieStatus == MovieStatus.Available ? "bg-success" :
+                                                    item.MovieStatus == MovieStatus.Upcoming ? "bg-warning text-dark" :
+                                                    "bg-danger")">
+                    @item.MovieStatus
+                </span>
+            </div>
+            <div class="card-footer bg-light border-top d-flex justify-content-between align-items-center">
+                <a href="/Customer/Details/Index/@item.Id" class="text-decoration-none">🎬 More Details</a>
+                <a href="#" class="btn btn-sm px-3
+                        @(item.MovieStatus == MovieStatus.Expired ? "btn-secondary disabled" : "btn-outline-success")">
+                    Book Ticket
+                </a>
+            </div>
+        </div>
+    </div>
+        }
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        @if (!(ViewBag.currentPage == 1))
+        {
+            <li class="page-item">
+                <a class="page-link" href="/Customer/Home/index?page=@(ViewBag.currentPage - 1)&search=@ViewBag.search">Previous</a>
+            </li>
+        }
+        @for (int i = 1; i <= ViewBag.totalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.currentPage ? "active" : "")">
+                <a class="page-link" href="/Customer/Home/index?page=@i&search=@ViewBag.search">@i</a>
+            </li>
+        }
+        @if (!(ViewBag.totalPages == ViewBag.currentPage))
+        {
+            <li class="page-item">
+                <a class="page-link" href="/Customer/Home/index?page=@(ViewBag.currentPage + 1)&search=@ViewBag.search">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
+
