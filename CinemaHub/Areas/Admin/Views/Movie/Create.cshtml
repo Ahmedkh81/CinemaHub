@@ -1,0 +1,102 @@
+﻿@using CinemaHub.ViewModels
+@model MovieWithCategoryWithCinemaVM
+
+<div class="container">
+    <div class="row my-3">
+        <div class="col-12">
+            <form enctype="multipart/form-data" method="post">
+                <div class="mb-3">
+                    <label asp-for="Movie.Name" class="form-label">Name</label>
+                    <input type="text" class="form-control" asp-for="Movie.Name">
+                    <span asp-validation-for="Movie.Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Movie.Description" class="form-label">Description</label>
+                    <input type="text" class="form-control" asp-for="Movie.Description">
+                    <span asp-validation-for="Movie.Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="name" name="Movie.Price" value="@Model.Movie.Price">
+                </div>
+                <div class="mb-3">
+                    <label for="imageInput" class="form-label">Image Url</label>
+                    <input type="file" class="form-control" id="imageInput" name="ImageUrl" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                    <img id="previewImage" src="@(Model.Movie.ImageUrl != null ? Url.Content("~/Images/" + Model.Movie.ImageUrl) : "#")"
+                         style="max-height: 150px;" class="img-thumbnail" alt="Image Preview" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Movie.TrailerUrl" class="form-label">TrailerUrl</label>
+                    <input type="text" class="form-control" asp-for="Movie.TrailerUrl">
+                    <span asp-validation-for="Movie.TrailerUrl" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Movie.StartDate" class="form-label">Start Date</label>
+                    <input type="datetime" class="form-control" asp-for="Movie.StartDate">
+                    <span asp-validation-for="Movie.StartDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Movie.EndDate" class="form-label">End Date</label>
+                    <input type="datetime" class="form-control" asp-for="Movie.EndDate">
+                    <span asp-validation-for="Movie.EndDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="categoryId" class="form-label">Category Name</label>
+                    <select asp-for="Movie.CategoryId" class="form-select">
+                        @foreach (var item in Model.Categories)
+                        {
+                            if (item.Id == Model.Movie.CategoryId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger" asp-validation-for="Movie.CategoryId"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="CinemaId" class="form-label">Cinema Name</label>
+                    <select asp-for="Movie.CinemaId" class="form-select">
+                        @foreach (var item in Model.Cinemas)
+                        {
+                            if (item.Id == Model.Movie.CinemaId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger" asp-validation-for="Movie.CinemaId"></span>
+                </div>
+                <select multiple class="form-control" name="SelectedActorIds">
+                    @foreach (var actor in Model.Actors)
+                    {
+                        <option value="@actor.Value">@actor.Text</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function (event) {
+            const [file] = event.target.files;
+            if (file) {
+                const preview = document.getElementById('previewImage');
+                preview.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
+}

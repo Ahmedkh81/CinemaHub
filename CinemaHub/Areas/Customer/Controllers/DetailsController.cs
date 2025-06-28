@@ -10,8 +10,12 @@ namespace CinemaHub.Areas.Customer.Controllers
         private readonly ApplicationDbContext _context = new ApplicationDbContext();
         public IActionResult Index(int id)
         {
-            var movie = _context.Movies.Include(e => e.Category).Where(e => e.CategoryId == e.Category.Id).Include(e => e.Cinema)
-                .Include(e => e.Actors).FirstOrDefault(e => e.Id == id);
+            var movie = _context.Movies
+                .Include(e => e.Category)
+                .Include(e => e.Cinema)
+                .Include(e => e.MovieActors)
+                .ThenInclude(ma => ma.Actor)
+                .FirstOrDefault(e => e.Id == id);
 
             if (movie is null)
                 return View("NotFound");

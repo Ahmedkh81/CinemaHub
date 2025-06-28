@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Movie>
+
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <h2 class="fw-bold mb-3 mb-md-0">🎬 All Movies</h2>
+        <a href="/Admin/Movie/Create" class="btn btn-success shadow-sm px-4">
+            <i class="bi bi-plus-circle me-2"></i> Add New Movie
+        </a>
+    </div>
+
+    @section Scripts {
+        <script>
+            @if (TempData["success-notification"] is not null)
+            {
+                        <text>
+                            toastr.success('@TempData["success-notification"]');
+                        </text>
+            }
+                document.addEventListener("DOMContentLoaded", function () {
+                const deleteButtons = document.querySelectorAll(".btn-delete");
+
+                deleteButtons.forEach(button => {
+                    button.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const deleteUrl = this.getAttribute("href");
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "This cinema will be permanently deleted.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, delete it!',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = deleteUrl;
+                            }
+                        });
+                    });
+                });
+            });
+
+        </script>
+    }
+
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Poster</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Status</th>
+                    <th>Category</th>
+                    <th>Cinema</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+
+                        <td>
+                            <img src="~/Images/@item.ImageUrl" class="img-thumbnail" style="height: 50px; width: auto;" alt="Poster" />
+                        </td>
+
+                        <td class="fw-semibold">
+                            @(item.Name?.Length > 20 ? item.Name.Substring(0, 10) + "..." : item.Name)
+                        </td>
+
+                        <td class="fw-bold">@item.Price.ToString("C")</td>
+
+                        <td>@item.StartDate.ToShortDateString()</td>
+                        <td>@item.EndDate.ToShortDateString()</td>
+
+                        <td>
+                            <span class="badge
+                                    @(item.MovieStatus == MovieStatus.Available ? "bg-success" :
+                                                                    item.MovieStatus == MovieStatus.Upcoming ? "bg-warning text-dark" :
+                                                                    "bg-danger")">
+                            @item.MovieStatus
+                        </span>
+                    </td>
+
+                        <td>@item.Category?.Name</td>
+                        <td>@item.Cinema?.Name</td>
+
+                        <td class="text-end">
+                            <a href="/Admin/Movie/Edit/@item.Id" class="btn btn-sm btn-warning me-2">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a href="/Admin/Movie/Delete/@item.Id"
+                               class="btn btn-sm btn-danger btn-delete"
+                               data-id="@item.Id">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        @if (!(ViewBag.currentPage == 1))
+        {
+            <li class="page-item">
+                <a class="page-link" href="/admin/movie/index?page=@(ViewBag.currentPage - 1)&search=@ViewBag.search">Previous</a>
+            </li>
+        }
+        @for (int i = 1; i <= ViewBag.totalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.currentPage ? "active" : "")">
+                <a class="page-link" href="/admin/movie/index?page=@i&search=@ViewBag.search">@i</a>
+            </li>
+        }
+        @if (!(ViewBag.totalPages == ViewBag.currentPage))
+        {
+            <li class="page-item">
+                <a class="page-link" href="/admin/movie/index?page=@(ViewBag.currentPage + 1)&search=@ViewBag.search">Next</a>
+            </li>
+        }
+    </ul>
+</nav>

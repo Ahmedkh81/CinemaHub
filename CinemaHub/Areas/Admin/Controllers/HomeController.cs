@@ -15,7 +15,7 @@ namespace CinemaHub.Areas.Admin.Controllers
             var totalMovies = _context.Movies.Count();
             var totalCinemas = _context.Cinemas.Count();
             var totalActors = _context.Actors.Count();
-            var actors = _context.Actors.Include(e => e.Movies);
+            var actors = _context.Actors.Include(e => e.MovieActors).ThenInclude(e => e.Movie);
             
 
             var availableMovies = _context.Movies.AsEnumerable().Count(e => e.MovieStatus == MovieStatus.Available);

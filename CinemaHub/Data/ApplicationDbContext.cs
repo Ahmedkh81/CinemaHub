@@ -9,6 +9,7 @@ namespace CinemaHub.Data
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Actor> Actors { get; set; }
+        public DbSet<MovieActor> MovieActors { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -16,6 +17,24 @@ namespace CinemaHub.Data
             base.OnConfiguring(optionsBuilder);
 
             optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CinemaHub; Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MovieActor>()
+                .HasKey(e => new { e.MovieId, e.ActorId });
+
+            modelBuilder.Entity<MovieActor>()
+                .HasOne(e => e.Movie)
+                .WithMany(e => e.MovieActors)
+                .HasForeignKey(e => e.MovieId);
+
+            modelBuilder.Entity<MovieActor>()
+                .HasOne(e => e.Actor)
+                .WithMany(e => e.MovieActors)
+                .HasForeignKey(e => e.ActorId);
         }
     }
 }

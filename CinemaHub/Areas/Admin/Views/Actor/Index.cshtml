@@ -1,0 +1,127 @@
+﻿@model IEnumerable<Actor>
+
+
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <h2 class="fw-bold mb-3 mb-md-0">🎬 All Actors</h2>
+        <a href="/Admin/Actor/Create" class="btn btn-success shadow-sm px-4">
+            <i class="bi bi-plus-circle me-2"></i> Add New Actor
+        </a>
+    </div>
+
+    @section Scripts {
+        <script>
+            @if (TempData["success-notification"] is not null)
+            {
+                    <text>
+                        toastr.success('@TempData["success-notification"]');
+                    </text>
+            }
+                document.addEventListener("DOMContentLoaded", function () {
+                const deleteButtons = document.querySelectorAll(".btn-delete");
+
+                deleteButtons.forEach(button => {
+                    button.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const deleteUrl = this.getAttribute("href");
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "This cinema will be permanently deleted.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, delete it!',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = deleteUrl;
+                            }
+                        });
+                    });
+                });
+            });
+
+        </script>
+    }
+
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Profile Pic</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Bio</th>
+                    <th>News</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th scope="row">@item.Id</th>
+                        <td>
+                            <img src="~/Images/@item.ProfilePictureUrl" style="height: 50px; width: auto;" class="img-thumbnail" />
+                        </td>
+                        <td class="fw-semibold">@item.FirstName</td>
+                        <td class="fw-semibold">@item.LastName</td>
+                        @if (item.Bio is not null && item.Bio.Length > 50)
+                        {
+                            <td>@item.Bio.Substring(0, 10)...</td>
+                        }
+                        else
+                        {
+                            <td>@item.Bio</td>
+                        }
+                        @if (item.News is not null && item.News.Length > 50)
+                        {
+                            <td>@item.News.Substring(0, 10)...</td>
+                        }
+                        else
+                        {
+                            <td>@item.News</td>
+                        }
+                        <td class="text-end">
+                            <a href="/Admin/Actor/Edit/@item.Id" class="btn btn-sm btn-warning me-2">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a href="/Admin/Actor/Delete/@item.Id"
+                               class="btn btn-sm btn-danger btn-delete"
+                               data-id="@item.Id">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        @if (!(ViewBag.currentPage == 1))
+        {
+            <li class="page-item">
+                <a class="page-link" href="/admin/actor/index?page=@(ViewBag.currentPage - 1)&search=@ViewBag.search">Previous</a>
+            </li>
+        }
+        @for (int i = 1; i <= ViewBag.totalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.currentPage ? "active" : "")">
+                <a class="page-link" href="/admin/actor/index?page=@i&search=@ViewBag.search">@i</a>
+            </li>
+        }
+        @if (!(ViewBag.totalPages == ViewBag.currentPage))
+        {
+            <li class="page-item">
+                <a class="page-link" href="/admin/actor/index?page=@(ViewBag.currentPage + 1)&search=@ViewBag.search">Next</a>
+            </li>
+        }
+    </ul>
+</nav>

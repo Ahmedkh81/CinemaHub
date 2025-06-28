@@ -1,59 +1,80 @@
 ﻿@model Movie
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="border rounded shadow-sm overflow-hidden">
-            <img src="~/Images/@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Name" style="object-fit: cover; height: 100%;" />
+<div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-5">
+    <div class="row g-0">
+        <!-- الصورة -->
+        <div class="col-md-5">
+            <img src="~/Images/@Model.ImageUrl" alt="@Model.Name"
+                 class="img-fluid h-100 object-fit-cover" style="object-fit: cover;" />
         </div>
-    </div>
 
-    <div class="col-md-8">
-        <h2 class="text-primary mb-3">@Model.Name</h2>
-        <p class="text-muted">@Model.Description</p>
+        <!-- التفاصيل -->
+        <div class="col-md-7 p-4 d-flex flex-column justify-content-between">
+            <div>
+                <h2 class="text-primary fw-bold mb-3">@Model.Name</h2>
+                <p class="text-muted">@Model.Description</p>
 
-        <ul class="list-group list-group-flush mb-3">
-            <li class="list-group-item"><strong>🎟️ Price:</strong> <span class="text-success">@Model.Price.ToString("C")</span></li>
-            <li class="list-group-item"><strong>🏢 Cinema:</strong> @Model.Cinema.Name</li>
-            <li class="list-group-item"><strong>📅 Start Date:</strong> @Model.StartDate.ToShortDateString()</li>
-            <li class="list-group-item"><strong>📅 End Date:</strong> @Model.EndDate.ToShortDateString()</li>
-            <li class="list-group-item"><strong>📂 Category:</strong> @Model.Category.Name</li>
-            <li class="list-group-item">
-                <strong>🎬 Status:</strong>
-                <span class="badge rounded-pill
-                    @(Model.MovieStatus == MovieStatus.Available ? "bg-success" :
-                                            Model.MovieStatus == MovieStatus.Upcoming ? "bg-warning text-dark" :
-                                            "bg-danger")">
-                    @Model.MovieStatus
-                </span>
-            </li>
-        </ul>
+                <div class="row mb-3">
+                    <div class="col-sm-6 mb-2">
+                        <strong>🎟️ Price:</strong> <span class="text-success">@Model.Price.ToString("C")</span>
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>🏢 Cinema:</strong> @Model.Cinema.Name
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>📅 Start:</strong> @Model.StartDate.ToShortDateString()
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>📅 End:</strong> @Model.EndDate.ToShortDateString()
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>📂 Category:</strong> @Model.Category.Name
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <strong>🎬 Status:</strong>
+                        <span class="badge rounded-pill
+                            @(Model.MovieStatus == MovieStatus.Available ? "bg-success" :
+                                                                              Model.MovieStatus == MovieStatus.Upcoming ? "bg-warning text-dark" :
+                                                                              "bg-danger")">
+                            @Model.MovieStatus
+                        </span>
+                    </div>
+                </div>
 
-        <div class="mt-4">
-            <h5 class="fw-bold">Actors:</h5>
-            <div class="d-flex flex-wrap gap-2">
-                @foreach (var actor in Model.Actors)
+                <!-- الممثلين -->
+                @if (Model.MovieActors?.Any() == true)
                 {
-                    <a href="/Customer/Actor/Index/@actor.Id">
-                        <img src="~/Images/@actor.ProfilePictureUrl" class="rounded-circle" style="width: 50px; height: 50px;" />
-                    </a>
+                    <h5 class="fw-bold mt-4">🎭 Actors:</h5>
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach (var actor in Model.MovieActors)
+                        {
+                            <a href="/Customer/Actor/Index/@actor.Actor.Id" class="text-decoration-none text-center">
+                                <img src="~/Images/@actor.Actor.ProfilePictureUrl" class="rounded-circle shadow-sm border" style="width: 60px; height: 60px;" />
+                                <div style="font-size: 0.85rem;">@($"{actor.Actor.FirstName} {actor.Actor.LastName}")</div>
+                            </a>
+                        }
+                    </div>
                 }
             </div>
-        </div>
 
-        @if (!string.IsNullOrEmpty(Model.TrailerUrl))
-        {
-            <div class="mt-4">
-                <h5 class="fw-bold">🎞️ Trailer</h5>
-                <video src="@Model.TrailerUrl" controls class="rounded w-100 shadow-sm" style="max-width: 600px;"></video>
+            <!-- الزر -->
+            <div class="mt-4 text-center">
+                <a href="#" class="btn px-5 py-2 fw-bold
+                    @(Model.MovieStatus == MovieStatus.Expired ? "btn-secondary disabled" : "btn-success")">
+                    🎫 Book Ticket
+                </a>
             </div>
-        }
-
-        <div class="mt-4 text-center">
-            <a href="#" class="btn px-5 py-2 fw-bold
-                @(Model.MovieStatus == MovieStatus.Expired ? "btn-secondary disabled" : "btn-success")">
-                Book Ticket
-            </a>
         </div>
     </div>
 </div>
+
+<!-- التريلر -->
+@if (!string.IsNullOrEmpty(Model.TrailerUrl))
+{
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-5">
+        <h4 class="fw-bold mb-3">🎞️ Trailer</h4>
+        <video src="@Model.TrailerUrl" controls class="w-100 rounded shadow" style="max-height: 500px;"></video>
+    </div>
+}
+
 
