@@ -1,26 +1,38 @@
 ﻿using CinemaHub.Data;
 using CinemaHub.Models;
+using CinemaHub.Repositories.IRepositories;
 using CinemaHub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CinemaHub.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-        public IActionResult Index()
-        {
-            var totalMovies = _context.Movies.Count();
-            var totalCinemas = _context.Cinemas.Count();
-            var totalActors = _context.Actors.Count();
-            var actors = _context.Actors.Include(e => e.MovieActors).ThenInclude(e => e.Movie);
-            
+        private readonly IMovieRepository _movieRepository;
+        private readonly ICinemaRepository _cinemaRepository;
+        private readonly IActorRepository _actorRepository;
 
-            var availableMovies = _context.Movies.AsEnumerable().Count(e => e.MovieStatus == MovieStatus.Available);
-            var upComingMovies = _context.Movies.AsEnumerable().Count(e => e.MovieStatus == MovieStatus.Upcoming);
-            var expiredMovies = _context.Movies.AsEnumerable().Count(e => e.MovieStatus == MovieStatus.Expired);
+        public HomeController(IMovieRepository movieRepository, ICinemaRepository cinemaRepository
+            , IActorRepository actorRepository)
+        {
+            _movieRepository = movieRepository;
+            _cinemaRepository = cinemaRepository;
+            _actorRepository = actorRepository;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var totalMovies = await _movieRepository.GetTotalCountAsync();
+            var totalCinemas = await _cinemaRepository.GetTotalCountAsync();
+            var totalActors = await _actorRepository.GetTotalCountAsync();
+            var actors = await _actorRepository.GetAllWithMoviesAsync();
+
+
+            var availableMovies = await _movieRepository.GetCountByStatusAsync(MovieStatus.Available);
+            var upComingMovies = await _movieRepository.GetCountByStatusAsync(MovieStatus.Upcoming);
+            var expiredMovies = await _movieRepository.GetCountByStatusAsync(MovieStatus.Expired);
 
             var vm = new DashBoardAdminVM
             {
@@ -30,7 +42,7 @@ namespace CinemaHub.Areas.Admin.Controllers
                 AvailableMovies = availableMovies,
                 UpcomingMovies = upComingMovies,
                 ExpiredMovies = expiredMovies,
-                Actors = actors.ToList()
+                Actors = actors
             };
             return View(vm);
         }

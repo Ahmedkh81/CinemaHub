@@ -1,10 +1,62 @@
 ﻿@using CinemaHub.Models
 @model List<Movie>
 
+@* Elegant Notification Messages *@
+@if (TempData["success-notification"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow text-center animate__animated animate__fadeInDown" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px; max-width: 90%;">
+        <strong>✅ Success!</strong> @TempData["success-notification"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["error-notification"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow text-center animate__animated animate__fadeInDown" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px; max-width: 90%;">
+        <strong>❌ Error!</strong> @TempData["error-notification"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+
 <form asp-controller="Home" asp-action="Index" method="get" class="d-flex mb-4">
     <input type="text" name="search" class="form-control me-2 shadow-sm" placeholder="Search by movie name..." value="@ViewBag.Search" />
     <button type="submit" class="btn btn-primary">Search</button>
 </form>
+
+
+
+@if (Model.Any())
+{
+    <div id="movieCarousel" class="carousel slide mb-5 shadow" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-inner rounded-4 overflow-hidden" style="background-color: #000;">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var movie = Model[i];
+                <div class="carousel-item @(i == 0 ? "active" : "") text-center">
+                    <div style="height: 500px; display: flex; justify-content: center; align-items: center; background-color: #111;">
+                        <img src="~/Images/@movie.ImageUrl"
+                             alt="@movie.Name"
+                             class="img-fluid shadow"
+                             style="max-height: 100%; max-width: 100%; object-fit: contain;" />
+                    </div>
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded-3">
+                        <h5 class="text-white fw-bold">@movie.Name</h5>
+                        <p class="text-light">@((movie.Description?.Length ?? 0) > 100 ? movie.Description.Substring(0, 100) + "..." : movie.Description)</p>
+                        <a href="/Customer/Details/Index/@movie.Id" class="btn btn-sm btn-outline-light fw-bold">🎬 See Details</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#movieCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+}
+
 
 <div class="d-flex flex-column gap-4">
     @foreach (var item in Model)

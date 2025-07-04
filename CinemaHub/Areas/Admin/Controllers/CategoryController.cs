@@ -1,18 +1,26 @@
 ﻿using CinemaHub.Data;
 using CinemaHub.Models;
+using CinemaHub.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CinemaHub.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-        public IActionResult Index()
+        private ICategoryRepository _categoryRepository;
+
+        public CategoryController(ICategoryRepository categoryRepository)
         {
-            var categories = _context.Categories;
-            return View(categories.ToList());
+            _categoryRepository = categoryRepository;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var categories = await _categoryRepository.GetAsync();
+            return View(categories);
         }
 
         public IActionResult Create()
@@ -21,12 +29,11 @@ namespace CinemaHub.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Categories.Add(category);
-                _context.SaveChanges();
+                await _categoryRepository.CreateAsync(category);
 
                 TempData["success-notification"] = "Category Added Successfully";
 
@@ -36,9 +43,9 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = await _categoryRepository.GetOneAsync(e=>e.Id == id);
             if (category is null)
             {
                 return NotFound();
@@ -47,12 +54,11 @@ namespace CinemaHub.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> Edit(Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Categories.Update(category);
-                _context.SaveChanges();
+                await _categoryRepository.UpdateAsync(category);
 
                 TempData["success-notification"] = "Category Updated Successfully";
 
@@ -62,17 +68,16 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var category = _context.Categories.Find(id);
-            if (category is null)
+            var category = await _categoryRepository.GetOneAsync(e => e.Id == id);
+            if (category is not null)
             {
-                return NotFound();
+                await _categoryRepository.DeleteAsync(category);
+                TempData["success-notification"] = "Category Deleted Successfully";
+                return RedirectToAction(nameof(Index));
             }
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
-            TempData["success-notification"] = "Category Deleted Successfully";
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CinemaHub.Data;
 using CinemaHub.Models;
+using CinemaHub.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -9,10 +10,16 @@ namespace CinemaHub.Areas.Admin.Controllers
     [Area("Admin")]
     public class ActorController : Controller
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
-        public IActionResult Index(int page = 1)
+        private IActorRepository _actorRepository;
+
+        public ActorController(IActorRepository actorRepository)
         {
-            IQueryable<Actor> actors = _context.Actors;
+            _actorRepository = actorRepository;
+        }
+
+        public async Task<IActionResult> Index(int page = 1)
+        {
+            var actors = await _actorRepository.GetAsync();
 
             var totalActorsInPage = 6;
             var totalPages = Math.Ceiling((double)actors.Count() / totalActorsInPage);
@@ -55,15 +62,15 @@ namespace CinemaHub.Areas.Admin.Controllers
                 actor.ProfilePictureUrl = fileName;
             }
 
-            _context.Actors.Add(actor);
-            _context.SaveChanges();
+            await _actorRepository.CreateAsync(actor);
+
             TempData["success-notification"] = "Actor Added Successfully";
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var actor = _context.Actors.Find(id);
+            var actor = await _actorRepository.GetOneAsync(e => e.Id == id );
             if (actor is null)
             {
                 return NotFound();
@@ -80,7 +87,7 @@ namespace CinemaHub.Areas.Admin.Controllers
                 return View(actor);
             }
 
-            var actorImg = _context.Actors.AsNoTracking().FirstOrDefault(e => e.Id == actor.Id);
+            var actorImg = await _actorRepository.GetOneAsync(e => e.Id == actor.Id , tracked : false);
             if (actorImg is not null)
             {
                 if(ProfilePictureUrl is not null && ProfilePictureUrl.Length > 0)
@@ -108,8 +115,8 @@ namespace CinemaHub.Areas.Admin.Controllers
                 {
                     actor.ProfilePictureUrl = actorImg.ProfilePictureUrl;
                 }
-                _context.Actors.Update(actor);
-                _context.SaveChanges();
+
+                await _actorRepository.UpdateAsync(actor);
 
                 TempData["success-notification"] = "Actor Updated Successfully";
                 return RedirectToAction("Index");
@@ -117,9 +124,9 @@ namespace CinemaHub.Areas.Admin.Controllers
             return NotFound();
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var actor = _context.Actors.Find(id);
+            var actor = await _actorRepository.GetOneAsync(e => e.Id == id);
             if (actor is null)
                 return NotFound();
 
@@ -132,8 +139,7 @@ namespace CinemaHub.Areas.Admin.Controllers
                 }
             }
 
-            _context.Actors.Remove(actor);
-            _context.SaveChanges();
+            await _actorRepository.DeleteAsync(actor);
 
             TempData["success-notification"] = "Actor Deleted Successfully";
             return RedirectToAction("Index");

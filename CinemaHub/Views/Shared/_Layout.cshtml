@@ -4,59 +4,351 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CinemaHub</title>
-    <script type="importmap"></script>
+
+    <!-- ===== Libraries ===== -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CinemaHub.styles.css" asp-append-version="true" />
-</head>
-<body id="body" class="d-flex flex-column min-vh-100">
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-3">
-            <div class="container-fluid">
-                <!-- Logo + Brand -->
-                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/Images/logo.png" alt="Logo" style="height: 35px; margin-right: 8px;" />
-                    <span class="fw-bold text-dark fs-4">CinemaHub</span>
-                </a>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-                <!-- Toggler Button for Mobile -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- ===== Theme Variables ===== -->
+    <style>
+        body.dark-mode {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+            body.dark-mode .navbar,
+            body.dark-mode .card,
+            body.dark-mode .table,
+            body.dark-mode .list-group-item,
+            body.dark-mode .border,
+            body.dark-mode .bg-light {
+                background-color: #1f1f1f !important;
+                color: #e0e0e0 !important;
+            }
+
+                body.dark-mode .navbar a,
+                body.dark-mode .text-dark,
+                body.dark-mode .nav-link {
+                    color: #f0f0f0 !important;
+                }
+
+            body.dark-mode .btn-outline-primary {
+                color: #ffffff;
+                border-color: #6c757d;
+            }
+
+                body.dark-mode .btn-outline-primary:hover {
+                    background-color: #6c757d;
+                    border-color: #6c757d;
+                    color: #ffffff;
+                }
+
+            body.dark-mode .table-dark thead {
+                background-color: #343a40 !important;
+                color: #fff !important;
+            }
+
+            body.dark-mode .form-control,
+            body.dark-mode input,
+            body.dark-mode textarea {
+                background-color: #2c2c2c;
+                color: #f0f0f0;
+                border-color: #444;
+            }
+
+                body.dark-mode .form-control:focus {
+                    background-color: #2c2c2c;
+                    color: #fff;
+                    border-color: #666;
+                    box-shadow: none;
+                }
+
+            body.dark-mode footer {
+                background-color: #1a1a1a;
+                color: #ccc;
+            }
+
+            body.dark-mode .text-muted {
+                color: #aaa !important;
+            }
+
+        /* Search input fix for dark mode */
+        input[type="search"],
+        input::placeholder {
+            color: #fff !important;
+            background-color: #212529 !important;
+        }
+
+        /* Table fix for dark mode */
+        body.dark-mode .table {
+            background-color: #2c2c2c;
+            color: #f8f9fa;
+        }
+
+            body.dark-mode .table th {
+                background-color: #343a40;
+                color: #fff;
+            }
+
+            body.dark-mode .table td {
+                background-color: #2c2c2c;
+                color: #e0e0e0;
+            }
+
+        /* Pagination fix */
+        body.dark-mode .pagination .page-link {
+            background-color: #343a40;
+            color: #fff;
+            border-color: #555;
+        }
+
+            body.dark-mode .pagination .page-link:hover {
+                background-color: #495057;
+                color: #fff;
+            }
+
+        /* Default input style - Light Mode */
+        body:not(.dark-mode) input[type="search"],
+        body:not(.dark-mode) input[type="text"],
+        body:not(.dark-mode) input[type="email"],
+        body:not(.dark-mode) input::placeholder {
+            color: #212529 !important;
+            background-color: #fff !important;
+        }
+
+        /* Dark Mode inputs */
+        body.dark-mode input[type="search"],
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="email"],
+        body.dark-mode input::placeholder {
+            color: #fff !important;
+            background-color: #212529 !important;
+        }
+
+        #darkModeToggle {
+            transition: all 0.3s ease;
+            border-color: #6c757d;
+        }
+
+        body.dark-mode #darkModeToggle {
+            background-color: #444;
+            border-color: #888;
+        }
+
+        #darkModeToggle:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .carousel-caption {
+            color: white;
+        }
+
+        /* يدعم الـ Light و Dark */
+        .account-dropdown {
+            background-color: var(--dropdown-bg, #fff);
+            color: var(--dropdown-text, #000);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .account-dropdown .dropdown-item {
+                color: inherit;
+                transition: background-color 0.2s, color 0.2s;
+            }
+
+                .account-dropdown .dropdown-item:hover {
+                    background-color: var(--dropdown-hover-bg, #f0f0f0);
+                    color: var(--dropdown-hover-text, #000);
+                }
+
+        /* Dark Mode */
+        body.dark-mode .account-link {
+            color: #fff !important;
+        }
+
+        body.dark-mode .account-dropdown {
+            --dropdown-bg: #1f1f1f;
+            --dropdown-text: #f8f9fa;
+            --dropdown-hover-bg: #333;
+            --dropdown-hover-text: #ffc107;
+        }
+
+        /* Light Mode */
+        body:not(.dark-mode) .account-dropdown {
+            --dropdown-bg: #fff;
+            --dropdown-text: #000;
+            --dropdown-hover-bg: #f8f9fa;
+            --dropdown-hover-text: #000;
+        }
+
+
+        :root {
+            --bg-color: #ffffff;
+            --card-color: #f8f9fa;
+            --text-color: #000000;
+            --input-bg: #ffffff;
+            --input-text: #000000;
+            --link-color: #0d6efd;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-color: #1e1e1e;
+            --text-color: #f8f9fa;
+            --input-bg: #2c2c2c;
+            --input-text: #f8f9fa;
+            --link-color: #66ccff;
+        }
+
+        .register-container {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .register-card {
+            background-color: var(--card-color);
+            color: var(--text-color);
+        }
+
+        .register-title {
+            color: #ffc107;
+        }
+
+        .register-input {
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid #6c757d;
+        }
+
+            .register-input::placeholder {
+                color: #aaa;
+            }
+
+        .link-login {
+            color: var(--link-color);
+            text-decoration: underline;
+        }
+
+        /* زر Sign Out بلون مناسب في الوضعين */
+        .signout-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            width: 100%;
+            text-align: left;
+            color: inherit;
+            font-size: 1rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+            /* Hover behavior for both themes */
+            .signout-btn:hover {
+                background-color: rgba(0, 0, 0, 0.05); /* خفيف في Light */
+            }
+
+        /* دعم الوضع الداكن */
+        body.dark-mode .signout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* خفيف في Dark */
+            color: #ffc107; /* لون مميز للزر في Hover */
+        }
+
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- ===== Header / Navbar ===== -->
+    <header>
+        <nav class="navbar navbar-expand-lg shadow-sm mb-3">
+            <div class="container-fluid">
+                <!-- Brand -->
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/Images/logo.png" alt="Logo" style="height:34px;" />
+                    <span class="fw-bold fs-4">CinemaHub</span>
+                </a>
+                <!-- Toggler -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Navbar Links -->
                 <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Categories</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Cinema" asp-action="Index">Cinemas</a></li>
+
+                        <!-- Account dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>👤</span> @(User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Account")
+                            </a>
+                            <ul class="dropdown-menu account-dropdown shadow-lg border-0" aria-labelledby="accountDropdown">
+                                @if (User.Identity?.IsAuthenticated ?? false)
+                                {
+                                    <li>
+                                        <form asp-area="Identity" asp-controller="Account" asp-action="SignOut" method="post" class="w-100">
+                                            <button type="submit" class="signout-btn">🔐 Sign Out</button>
+                                        </form>
+                                    </li>
+                                    <li><a class="dropdown-item" asp-area="Identity" asp-controller="Account" asp-action="Register">➕ Add New Account</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" asp-area="Identity" asp-controller="Account" asp-action="Register">🎟 Register</a></li>
+                                    <li><a class="dropdown-item" asp-area="Identity" asp-controller="Account" asp-action="Login">🔐 Login</a></li>
+                                }
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-controller="Category" asp-action="Index">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-controller="Cinema" asp-action="Index">Cinemas</a>
+                        <!-- Theme toggle -->
+                        <li class="nav-item ms-lg-3">
+                            <button id="darkModeToggle" class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;" title="Toggle Dark Mode">
+                                <span id="darkModeIcon">🌙</span>
+                            </button>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <!-- ===== Main ===== -->
+    <div class="container flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+
+    <!-- ===== Footer ===== -->
+    <footer class="footer mt-auto py-3 text-center custom-footer">
         <div class="container">
-            &copy; 2025 - CinemaHub - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <span class="footer-text">© 2025 - <strong>CinemaHub</strong> · <a href="#" class="footer-link">Privacy</a></span>
         </div>
     </footer>
 
+    <!-- ===== Scripts ===== -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Theme toggle with persistence
+        const body = document.body;
+        const icon = document.getElementById('darkModeIcon');
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') { body.classList.add('dark-mode'); icon.textContent = '☀️'; }
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            icon.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Auto‑dismiss alerts
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(a => new bootstrap.Alert(a).close());
+        }, 5000);
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
