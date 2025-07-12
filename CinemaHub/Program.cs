@@ -3,6 +3,7 @@ using CinemaHub.Models;
 using CinemaHub.Repositories;
 using CinemaHub.Repositories.IRepositories;
 using CinemaHub.Utility;
+using CinemaHub.Utility.DBInitializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.CodeAnalysis.Options;
@@ -26,12 +27,26 @@ namespace CinemaHub
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
+            builder.Services.AddAuthorization();
+            
+
+
+            builder.Services.AddScoped<IDBInitializer, DBInitializer>();
+
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IMovieActorsRepository, MovieActorsRepository>();
+            builder.Services.AddScoped<IApplicationUserOTPRepository, ApplicationUserOTPRepository>();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -48,6 +63,7 @@ namespace CinemaHub
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
@@ -55,6 +71,12 @@ namespace CinemaHub
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
+                dbInitializer.Initialize();
+            }
 
             app.Run();
         }

@@ -1,6 +1,8 @@
 ﻿using CinemaHub.Data;
 using CinemaHub.Models;
 using CinemaHub.Repositories.IRepositories;
+using CinemaHub.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -35,11 +37,13 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View(actors.ToList());
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         public IActionResult Create()
         {
             return View(new Actor());
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         [HttpPost]
         public async Task<IActionResult> Create(Actor actor, IFormFile ProfilePictureUrl)
         {
@@ -68,6 +72,7 @@ namespace CinemaHub.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         public async Task<IActionResult> Edit(int id)
         {
             var actor = await _actorRepository.GetOneAsync(e => e.Id == id );
@@ -78,6 +83,7 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View(actor);
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         [HttpPost]
         public async Task<IActionResult> Edit(Actor actor, IFormFile ProfilePictureUrl)
         {
@@ -124,6 +130,7 @@ namespace CinemaHub.Areas.Admin.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             var actor = await _actorRepository.GetOneAsync(e => e.Id == id);

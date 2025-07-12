@@ -285,6 +285,7 @@
                             <ul class="dropdown-menu account-dropdown shadow-lg border-0" aria-labelledby="accountDropdown">
                                 @if (User.Identity?.IsAuthenticated ?? false)
                                 {
+                                    <li><a class="dropdown-item" asp-area="Customer" asp-controller="Profile" asp-action="Index">🧾 Profile</a></li>
                                     <li>
                                         <form asp-area="Identity" asp-controller="Account" asp-action="SignOut" method="post" class="w-100">
                                             <button type="submit" class="signout-btn">🔐 Sign Out</button>

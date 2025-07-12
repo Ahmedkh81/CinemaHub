@@ -1,0 +1,106 @@
+﻿@using CinemaHub.Utility
+@model Dictionary<ApplicationUser, string>
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class="display-6">All Users</h2>
+            @if (User.IsInRole(Sd.SuperAdmin) || User.IsInRole(Sd.Admin))
+            {
+                <a href="/Admin/User/Create" class="btn btn-success shadow-sm px-4">
+                    <i class="bi bi-plus-lg me-2"></i>Create New User
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+
+            @if (TempData["success-notification"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show shadow text-center animate__animated animate__fadeInDown" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px; max-width: 90%;">
+                    <strong>✅ Success!</strong> @TempData["success-notification"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">UserName</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Roles</th>
+                        @if (User.IsInRole(Sd.SuperAdmin) || User.IsInRole(Sd.Admin))
+                        {
+                            <th scope="col">Actions</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Keys)
+                    {
+                        <tr>
+                            <th scope="row">@(item.FirstName + " " + item.LastName)</th>
+                            <td>@item.UserName</td>
+                            <td>@item.Email</td>
+                            <td>@Model[item]</td>
+                            @if (User.IsInRole(Sd.SuperAdmin) || User.IsInRole(Sd.Admin))
+                            {
+                                <td>
+                                    <a href="/Admin/User/Edit/@item.Id" type="button" class="btn btn-warning">Edit</a>
+
+                                    @if (!Model[item].Contains(Sd.SuperAdmin))
+                                    {
+                                        @if (item.LockoutEnabled)
+                                        {
+                                            <a href="/Admin/User/LockUnLock/@item.Id" type="button" class="btn btn-primary">Block</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/Admin/User/LockUnLock/@item.Id" type="button" class="btn btn-danger">Un Block</a>
+                                        }
+                                        <a href="/Admin/User/Delete/@item.Id"
+                                           class="btn btn-danger btn-delete"
+                                           data-id="@item.Id">Delete</a>
+                                    }
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".btn-delete");
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault(); // Prevent the default link navigation
+
+                const deleteUrl = this.getAttribute("href");
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to the delete URL
+                        window.location.href = deleteUrl;
+                    }
+                });
+            });
+        });
+    });
+</script>

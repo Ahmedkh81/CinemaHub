@@ -17,6 +17,7 @@ namespace CinemaHub.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<MovieActor> MovieActors { get; set; }
+        public DbSet<ApplicationUserOTP> applicationUserOTPs { get; set; }
 
 
         public ApplicationDbContext()

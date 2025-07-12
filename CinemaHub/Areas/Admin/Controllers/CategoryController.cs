@@ -1,6 +1,8 @@
 ﻿using CinemaHub.Data;
 using CinemaHub.Models;
 using CinemaHub.Repositories.IRepositories;
+using CinemaHub.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -23,11 +25,13 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View(categories);
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         public IActionResult Create()
         {
             return View(new Category());
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         [HttpPost]
         public async Task<IActionResult> Create(Category category)
         {
@@ -43,6 +47,7 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         public async Task<IActionResult> Edit(int id)
         {
             var category = await _categoryRepository.GetOneAsync(e=>e.Id == id);
@@ -53,6 +58,7 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View(category);
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         [HttpPost]
         public async Task<IActionResult> Edit(Category category)
         {
@@ -68,6 +74,7 @@ namespace CinemaHub.Areas.Admin.Controllers
             return View();
         }
 
+        [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _categoryRepository.GetOneAsync(e => e.Id == id);

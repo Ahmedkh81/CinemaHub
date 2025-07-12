@@ -1,7 +1,9 @@
 ﻿using CinemaHub.Data;
 using CinemaHub.Models;
 using CinemaHub.Repositories.IRepositories;
+using CinemaHub.Utility;
 using CinemaHub.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 namespace CinemaHub.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{Sd.SuperAdmin},{Sd.Admin},{Sd.Employee},{Sd.Company}")]
     public class HomeController : Controller
     {
         private readonly IMovieRepository _movieRepository;

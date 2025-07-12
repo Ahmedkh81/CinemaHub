@@ -1,13 +1,17 @@
-﻿@model IEnumerable<Cinema>
+﻿@using CinemaHub.Utility
+@model IEnumerable<Cinema>
 
 
 
 <div class="container py-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
         <h2 class="fw-bold mb-3 mb-md-0">🎬 All Cinemas</h2>
-        <a href="/Admin/Cinema/Create" class="btn btn-success shadow-sm px-4">
-            <i class="bi bi-plus-circle me-2"></i> Create New Cinema
-        </a>
+        @if (User.IsInRole(Sd.SuperAdmin) || User.IsInRole(Sd.Admin))
+        {
+            <a href="/Admin/Cinema/Create" class="btn btn-success shadow-sm px-4">
+                <i class="bi bi-plus-circle me-2"></i> Create New Cinema
+            </a>
+        }
     </div>
 
     @section Scripts {
@@ -56,7 +60,10 @@
                     <th>Description</th>
                     <th>Logo</th>
                     <th>Location</th>
-                    <th class="text-end">Actions</th>
+                    @if (User.IsInRole(Sd.SuperAdmin) || User.IsInRole(Sd.Admin))
+                    {
+                        <th class="text-end">Actions</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -76,14 +83,17 @@
                     <td>@item.CinemaLogo</td>
                     <td>@item.Location</td>
                     <td class="text-end">
-                        <a href="/Admin/Cinema/Edit/@item.Id" class="btn btn-sm btn-warning me-2">
-                            <i class="bi bi-pencil-square"></i> Edit
-                        </a>
-                        <a href="/Admin/Cinema/Delete/@item.Id"
-                           class="btn btn-sm btn-danger btn-delete"
-                           data-id="@item.Id">
-                            <i class="bi bi-trash"></i> Delete
-                        </a>
+                            @if (User.IsInRole(Sd.SuperAdmin) || User.IsInRole(Sd.Admin))
+                            {
+                                <a href="/Admin/Cinema/Edit/@item.Id" class="btn btn-sm btn-warning me-2">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a href="/Admin/Cinema/Delete/@item.Id"
+                                   class="btn btn-sm btn-danger btn-delete"
+                                   data-id="@item.Id">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            }
                     </td>
                 </tr>
                 }

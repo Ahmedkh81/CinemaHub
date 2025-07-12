@@ -1,0 +1,49 @@
+﻿@using CinemaHub.ViewModels
+@model ForgotPasswordVM
+@{
+    ViewData["Title"] = "Forgot Password";
+}
+
+<div class="container d-flex align-items-center justify-content-center min-vh-100 forget-page">
+    <div class="card shadow-lg border-0 rounded-4 p-4 forget-card" style="max-width: 500px; width: 100%;">
+        <h2 class="text-center mb-4 text-warning">🔐 Forgot Your Password?</h2>
+
+        @if (TempData["success-notification"] != null)
+        {
+            <div class="alert alert-success text-center shadow-sm mb-3">
+                @Html.Raw(TempData["success-notification"])
+            </div>
+        }
+        @if (TempData["error-notification"] != null)
+        {
+            <div class="alert alert-danger text-center shadow-sm mb-3">
+                @Html.Raw(TempData["error-notification"])
+            </div>
+        }
+
+        <form asp-action="ForgetPassword" method="post" class="needs-validation" novalidate>
+            <div asp-validation-summary="All" class="text-danger mb-3 small"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="EmailOrUserName" class="form-label">Email or Username</label>
+                <input asp-for="EmailOrUserName" class="form-control border-secondary bg-body text-body" />
+                <span asp-validation-for="EmailOrUserName" class="text-danger small"></span>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-warning fw-bold">📨 Send OTP</button>
+            </div>
+        </form>
+
+        <div class="mt-3 text-center">
+            <span>
+                Remembered your password?
+                <a asp-action="Login" asp-controller="Account" class="fw-semibold link-info">Login here</a>
+            </span>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
