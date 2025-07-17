@@ -12,7 +12,7 @@ namespace CinemaHub.Areas.Customer.Controllers
         private readonly ApplicationDbContext _context = new ApplicationDbContext();
         public IActionResult Index(string? search, int page = 1)
         {
-            IQueryable<Movie> movies = _context.Movies.Include(e => e.Category).Include(e => e.Cinema);
+            IQueryable<Movie> movies = _context.Movies.Include(e => e.Category).Include(e => e.Cinema).Include(m => m.MovieSchedules);
 
             if (search is not null)
             {

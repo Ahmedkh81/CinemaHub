@@ -4,6 +4,7 @@ using CinemaHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250717163751_addingMovieScedualModel")]
+    partial class addingMovieScedualModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,13 +179,16 @@ namespace CinemaHub.Migrations
                     b.Property<int>("MovieScheduleId")
                         .HasColumnType("int");
 
+                    b.Property<string>("SeatNumber")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
                     b.Property<int?>("MovieScheduleId1")
                         .HasColumnType("int");
 
-                    b.HasKey("ApplicationUserId", "MovieId", "MovieScheduleId");
+                    b.HasKey("ApplicationUserId", "MovieId", "MovieScheduleId", "SeatNumber");
 
                     b.HasIndex("MovieId");
 
@@ -611,7 +617,7 @@ namespace CinemaHub.Migrations
             modelBuilder.Entity("CinemaHub.Models.MovieSchedule", b =>
                 {
                     b.HasOne("CinemaHub.Models.Movie", "Movie")
-                        .WithMany("MovieSchedules")
+                        .WithMany()
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -718,8 +724,6 @@ namespace CinemaHub.Migrations
             modelBuilder.Entity("CinemaHub.Models.Movie", b =>
                 {
                     b.Navigation("MovieActors");
-
-                    b.Navigation("MovieSchedules");
                 });
 
             modelBuilder.Entity("CinemaHub.Models.MovieSchedule", b =>

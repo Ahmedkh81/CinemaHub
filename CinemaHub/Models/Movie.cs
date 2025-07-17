@@ -20,6 +20,7 @@ namespace CinemaHub.Models
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+        public int? AvailableTickets { get; set; }
         public MovieStatus MovieStatus
         {
             get
@@ -42,5 +43,6 @@ namespace CinemaHub.Models
         public Category Category { get; set; } = null!;
         [ValidateNever]
         public List<MovieActor> MovieActors { get; set; } = new();
+        public ICollection<MovieSchedule> MovieSchedules { get; set; } = new List<MovieSchedule>();
     }
 }

@@ -4,6 +4,7 @@ using CinemaHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaHub.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250716180901_AddingOrderAndOrderItemModels")]
+    partial class AddingOrderAndOrderItemModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,22 +176,12 @@ namespace CinemaHub.Migrations
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MovieScheduleId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MovieScheduleId1")
-                        .HasColumnType("int");
-
-                    b.HasKey("ApplicationUserId", "MovieId", "MovieScheduleId");
+                    b.HasKey("ApplicationUserId", "MovieId");
 
                     b.HasIndex("MovieId");
-
-                    b.HasIndex("MovieScheduleId");
-
-                    b.HasIndex("MovieScheduleId1");
 
                     b.ToTable("Carts");
                 });
@@ -308,27 +301,6 @@ namespace CinemaHub.Migrations
                     b.HasIndex("ActorId");
 
                     b.ToTable("MovieActors");
-                });
-
-            modelBuilder.Entity("CinemaHub.Models.MovieSchedule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ShowTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
-
-                    b.ToTable("MovieSchedules");
                 });
 
             modelBuilder.Entity("CinemaHub.Models.Order", b =>
@@ -544,30 +516,18 @@ namespace CinemaHub.Migrations
                     b.HasOne("CinemaHub.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CinemaHub.Models.Movie", "Movie")
                         .WithMany()
                         .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("CinemaHub.Models.MovieSchedule", "MovieSchedule")
-                        .WithMany()
-                        .HasForeignKey("MovieScheduleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("CinemaHub.Models.MovieSchedule", null)
-                        .WithMany("Carts")
-                        .HasForeignKey("MovieScheduleId1");
 
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Movie");
-
-                    b.Navigation("MovieSchedule");
                 });
 
             modelBuilder.Entity("CinemaHub.Models.Movie", b =>
@@ -604,17 +564,6 @@ namespace CinemaHub.Migrations
                         .IsRequired();
 
                     b.Navigation("Actor");
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("CinemaHub.Models.MovieSchedule", b =>
-                {
-                    b.HasOne("CinemaHub.Models.Movie", "Movie")
-                        .WithMany("MovieSchedules")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Movie");
                 });
@@ -718,13 +667,6 @@ namespace CinemaHub.Migrations
             modelBuilder.Entity("CinemaHub.Models.Movie", b =>
                 {
                     b.Navigation("MovieActors");
-
-                    b.Navigation("MovieSchedules");
-                });
-
-            modelBuilder.Entity("CinemaHub.Models.MovieSchedule", b =>
-                {
-                    b.Navigation("Carts");
                 });
 #pragma warning restore 612, 618
         }

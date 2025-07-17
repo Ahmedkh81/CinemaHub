@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg rounded-4 p-4 w-100" style="max-width: 600px;">
+        <div class="card-body text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/845/845646.png" alt="Success" width="80" class="mb-3">
+            <h2 class="text-success fw-bold">✅ Payment Successful</h2>
+            <p class="lead text-muted">Your order has been confirmed. Thank you for your purchase!</p>
+            <p>You can now view your order details in your profile.</p>
+            <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-success mt-3 fw-bold">
+                🎬 Continue Browsing
+            </a>
+        </div>
+    </div>
+</div>

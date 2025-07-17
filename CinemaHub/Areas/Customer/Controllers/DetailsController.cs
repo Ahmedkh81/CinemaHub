@@ -15,10 +15,13 @@ namespace CinemaHub.Areas.Customer.Controllers
                 .Include(e => e.Cinema)
                 .Include(e => e.MovieActors)
                 .ThenInclude(ma => ma.Actor)
+                .Include(e => e.MovieSchedules)
                 .FirstOrDefault(e => e.Id == id);
 
             if (movie is null)
                 return View("NotFound");
+
+            ViewBag.Schedules = movie.MovieSchedules.OrderBy(s => s.ShowTime).ToList();
             return View(movie);
         }
     }

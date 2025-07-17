@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Order Cancelled";
+}
+
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg rounded-4 p-4 w-100" style="max-width: 600px;">
+        <div class="card-body text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828843.png" alt="Cancelled" width="80" class="mb-3">
+            <h2 class="text-danger fw-bold">❌ Payment Cancelled</h2>
+            <p class="lead text-muted">Your order was not completed. No payment has been made.</p>
+            <p>Feel free to try again whenever you're ready.</p>
+            <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary mt-3 fw-bold">
+                🛒 Back to Cart
+            </a>
+        </div>
+    </div>
+</div>

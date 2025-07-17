@@ -254,6 +254,28 @@
             color: #ffc107; /* لون مميز للزر في Hover */
         }
 
+        /* إزالة أي مسافة تحت آخر عنصر في الصفحة */
+        main > .container {
+            margin-bottom: auto !important;
+        }
+
+        /* حل مضمون لإجبار الفوتر يكون في آخر الصفحة */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1 0 auto; /* ده يخلي الـ main يتمدد وياخد المساحة الفاضية */
+        }
+
+        footer {
+            flex-shrink: 0;
+        }
+
+
+
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -286,6 +308,7 @@
                                 @if (User.Identity?.IsAuthenticated ?? false)
                                 {
                                     <li><a class="dropdown-item" asp-area="Customer" asp-controller="Profile" asp-action="Index">🧾 Profile</a></li>
+                                    <li><a class="dropdown-item" asp-area="Customer" asp-controller="Cart" asp-action="Index">🛒 Cart</a></li>
                                     <li>
                                         <form asp-area="Identity" asp-controller="Account" asp-action="SignOut" method="post" class="w-100">
                                             <button type="submit" class="signout-btn">🔐 Sign Out</button>
@@ -313,15 +336,15 @@
     </header>
 
     <!-- ===== Main ===== -->
-    <div class="container flex-grow-1">
-        <main role="main" class="pb-3">
+    <main role="main" class="flex-fill d-flex flex-column">
+        <div class="container my-auto">
             @RenderBody()
-        </main>
-    </div>
+        </div>
+    </main>
 
 
     <!-- ===== Footer ===== -->
-    <footer class="footer mt-auto py-3 text-center custom-footer">
+    <footer class="footer py-3 text-center custom-footer bg-light border-top mt-auto">
         <div class="container">
             <span class="footer-text">© 2025 - <strong>CinemaHub</strong> · <a href="#" class="footer-link">Privacy</a></span>
         </div>

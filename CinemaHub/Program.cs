@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace CinemaHub
 {
@@ -21,7 +22,7 @@ namespace CinemaHub
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<ApplicationDbContext>
-                (Option => Option.UseSqlServer("Data Source=.;Initial Catalog=CinemaHub; Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;"));
+                (Option => Option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -44,11 +45,16 @@ namespace CinemaHub
             builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
             builder.Services.AddScoped<IActorRepository, ActorRepository>();
             builder.Services.AddScoped<IMovieActorsRepository, MovieActorsRepository>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             builder.Services.AddScoped<IApplicationUserOTPRepository, ApplicationUserOTPRepository>();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 

@@ -19,6 +19,9 @@
                         <strong>🎟️ Price:</strong> <span class="text-success">@Model.Price.ToString("C")</span>
                     </div>
                     <div class="col-sm-6 mb-2">
+                        <strong>🎫 Available Tickets:</strong> @Model.AvailableTickets
+                    </div>
+                    <div class="col-sm-6 mb-2">
                         <strong>🏢 Cinema:</strong> @Model.Cinema.Name
                     </div>
                     <div class="col-sm-6 mb-2">
@@ -58,15 +61,46 @@
             </div>
 
             <!-- الزر -->
-            <div class="mt-4 text-center">
-                <a href="#" class="btn px-5 py-2 fw-bold
-                    @(Model.MovieStatus == MovieStatus.Expired ? "btn-secondary disabled" : "btn-success")">
-                    🎫 Book Ticket
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+            <form asp-action="AddToCart" asp-controller="Cart" method="post" class="mt-4">
+                <input type="hidden" name="movieId" value="@Model.Id" />
+
+                <div class="row g-3">
+                    <!-- Ticket Count -->
+                    <div class="col-md-4">
+                        <label for="count" class="form-label">Ticket Count</label>
+                        <input type="number" name="count" id="count" class="form-control" min="1" value="1" required />
+                    </div>
+
+                    <!-- Schedule -->
+                    <div class="col-md-4">
+                        <label for="scheduleId" class="form-label">Schedule</label>
+                        <select name="scheduleId" id="scheduleId" class="form-select" required>
+                            <option value="">Select a schedule</option>
+                            @foreach (var schedule in ViewBag.Schedules as List<MovieSchedule>)
+                            {
+                                <option value="@schedule.Id">@schedule.ShowTime.ToString("dd MMM yyyy - hh:mm tt")</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <div class="mt-4 text-center">
+                    @if (Model.MovieStatus == MovieStatus.Expired)
+                    {
+                        <button type="submit" class="btn btn-primary" disabled>
+                            <i class="bi bi-cart-plus"></i>🛒 Add to Cart (Expired)
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-cart-plus"></i>🛒 Add to Cart
+                        </button>
+                    }
+                </div>
+            </form>
 
 <!-- التريلر -->
 @if (!string.IsNullOrEmpty(Model.TrailerUrl))

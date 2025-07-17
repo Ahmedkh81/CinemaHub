@@ -18,6 +18,10 @@ namespace CinemaHub.Data
         public DbSet<Actor> Actors { get; set; }
         public DbSet<MovieActor> MovieActors { get; set; }
         public DbSet<ApplicationUserOTP> applicationUserOTPs { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<MovieSchedule> MovieSchedules { get; set; }
 
 
         public ApplicationDbContext()
@@ -46,6 +50,25 @@ namespace CinemaHub.Data
                 .HasOne(e => e.Actor)
                 .WithMany(e => e.MovieActors)
                 .HasForeignKey(e => e.ActorId);
+
+            modelBuilder.Entity<Cart>()
+    .HasOne(c => c.ApplicationUser)
+    .WithMany()
+    .HasForeignKey(c => c.ApplicationUserId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.Movie)
+                .WithMany()
+                .HasForeignKey(c => c.MovieId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.MovieSchedule)
+                .WithMany()
+                .HasForeignKey(c => c.MovieScheduleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

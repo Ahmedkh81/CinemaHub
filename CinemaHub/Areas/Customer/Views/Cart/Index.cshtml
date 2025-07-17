@@ -1,0 +1,122 @@
+﻿@model IEnumerable<Cart>
+@{
+    ViewData["Title"] = "🛒 Your Cart";
+    var total = ViewBag.totalPrice as decimal? ?? 0;
+}
+
+<table class="table table-bordered text-center align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Poster</th>
+            <th>Movie</th>
+            <th>Show Time</th>
+            <th>Price</th>
+            <th>Count</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="~/Images/@item.Movie.ImageUrl" style="width: 80px; height: 100px;" class="rounded shadow" />
+                </td>
+                <td class="fw-bold">@item.Movie.Name</td>
+                <td>
+                    @item.MovieSchedule?.ShowTime.ToString("dd MMM yyyy - hh:mm tt") <!-- شكل لطيف للميعاد -->
+                </td>
+                <td>@item.Movie.Price.ToString("C")</td>
+                <td>@item.Count</td>
+                <td class="text-success fw-bold">@((item.Movie.Price * item.Count).ToString("C"))</td>
+                <td>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a asp-area="Customer" asp-controller="Cart" asp-action="IncrementCount"
+                           asp-route-movieId="@item.MovieId"
+                           asp-route-scheduleId="@item.MovieScheduleId" class="btn btn-sm btn-outline-success">+</a>
+                        <a asp-area="Customer" asp-controller="Cart" asp-action="DecrementCount"
+                           asp-route-movieId="@item.MovieId"
+                           asp-route-scheduleId="@item.MovieScheduleId" class="btn btn-sm btn-outline-warning">-</a>
+                        <a asp-area="Customer" asp-controller="Cart" asp-action="RemoveFromCart" asp-route-movieId="@item.MovieId" class="btn btn-sm btn-outline-danger">🗑 Remove</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Any())
+{
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="fs-5 fw-bold">
+            🧾 Total: <span class="text-primary">@total.ToString("C")</span>
+        </div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#proceedModal">
+            Proceed to Pay
+        </button>
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center mt-4">
+        🛒 Your cart is empty! Start adding movies to your cart.
+    </div>
+}
+
+<div class="modal fade" id="proceedModal" tabindex="-1" aria-labelledby="proceedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal">
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="proceedModalLabel">Before You Continue</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <div class="proceed-note p-3 rounded">
+                    🎟️ You will be able to choose your seat at the cinema before the movie starts.
+                </div>
+            </div>
+
+            <div class="modal-footer border-0">
+                <a href="/Customer/Cart/Pay" class="btn btn-primary w-100">Continue to Payment</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* تصميم البوكس اللي جواه الرسالة */
+    .proceed-note {
+        background-color: rgba(100, 149, 237, 0.1); /* Light Cornflower Blue */
+        border: 1px solid #6495ED;
+        color: #1e1e1e;
+        font-weight: 500;
+    }
+
+    /* تعديل على الـ modal في الوضع الليلي */
+    body.dark-mode .proceed-note {
+        background-color: rgba(100, 149, 237, 0.2);
+        color: #f0f0f0;
+        border-color: #5a9bd4;
+    }
+
+    /* تنسيق عام للمودال */
+    .custom-modal {
+        background-color: var(--bs-body-bg);
+        color: var(--bs-body-color);
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Dark mode modal style */
+    body.dark-mode .custom-modal {
+        background-color: #1e1e2f;
+        color: #f8f8f8;
+    }
+</style>
+
+
+
